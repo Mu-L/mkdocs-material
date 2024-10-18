@@ -149,6 +149,10 @@ class PrivacyPlugin(BasePlugin[PrivacyConfig]):
 
     # Sync all concurrent jobs
     def on_env(self, env, *, config, files):
+        if not self.config.enabled:
+            return
+
+        # Wait until all jobs until now are finished
         wait(self.pool_jobs)
 
     # Process external assets in template (run later)
@@ -332,7 +336,7 @@ class PrivacyPlugin(BasePlugin[PrivacyConfig]):
 
         # Return void or opening tag as string, strip closing tag
         data = tostring(el, encoding = "unicode")
-        return data.replace(" />", ">").replace(f"\"{temp}\"", "")
+        return data.replace(" />", ">").replace(f"=\"{temp}\"", "")
 
     # Enqueue external asset for download, if not already done
     def _queue(self, url: URL, config: MkDocsConfig, concurrent = False):
